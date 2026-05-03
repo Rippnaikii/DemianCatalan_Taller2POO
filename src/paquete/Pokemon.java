@@ -15,9 +15,7 @@ public class Pokemon {
 	private String tipo;
 	
 	
-	public Pokemon(String nombre, String habitat, double porcentajeAparicion, int vida, int ataque, int defensa,
-			int ataqueEspecial, int defensaEspecial, int velocidad, String tipo) 
-	{
+	public Pokemon(String nombre, String habitat, double porcentajeAparicion, int vida, int ataque, int defensa,int ataqueEspecial, int defensaEspecial, int velocidad, String tipo) {
 		this.nombre = nombre;
 		this.habitat = habitat;
 		this.porcentajeAparicion = porcentajeAparicion;
