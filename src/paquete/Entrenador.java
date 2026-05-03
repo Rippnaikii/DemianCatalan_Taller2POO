@@ -15,4 +15,13 @@ public class Entrenador {
 	public void agregarPokemon(Pokemon pokemon) {
 		this.equipo.add(pokemon);
 	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public ArrayList<Pokemon> getEquipo() {
+		return equipo;
+	}
+	
 }

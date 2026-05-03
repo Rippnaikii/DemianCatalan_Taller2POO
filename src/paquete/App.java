@@ -18,55 +18,62 @@ public class App {
 		leerPokemones();
 		
 		System.out.println("Habitats cargados: "+ habitats.size()); // solo para probar si printea bien...
+		Scanner entrada = new Scanner(System.in); 
 		
-		//pendiente el menu
 		boolean aux = true;
 		do {
 			System.out.println("1) Continuar. \n2) Nueva Partida. \n3) Salir. ");
-			Scanner entrada = new Scanner(System.in); 
 			System.out.println(" ");
 			System.out.print("Ingrese Opcion: ");
 			int opcion = Integer.parseInt(entrada.nextLine());
 			switch (opcion) {
 			case 1: 
 				//Opcion continuar
-				Jugador jugadorRegistros = leerRegistros(); // esto da un error de momento ya que no hay nada en el txt
+				Jugador jugadorRegistros = leerRegistros(); 
 				//menuJuego(entrada,jugadorRegistros);
-				boolean aux2 = true;
-				do {
+				
+				if (!(jugadorRegistros == null)) {
+					boolean aux2 = true;
+					do {
+						System.out.println(" ");
+						System.out.println("\n¿Qué deseas hacer?\n1) Revisar equipo\n2) Salir a capturar\n3) Acceso al pc (cambiar pokemon del equipo) \n4) Retar un Gimnasio  \n5) Desafio de alto mando \n6) Curar Pokemon \n7) Guardar \n8) Guardar y salir "); 
+						System.out.print("Ingrese Opcion: ");
+						int opcion2 = Integer.parseInt(entrada.nextLine()); 
+						switch (opcion2) {
+						case 1:
+							System.out.println(" ");
+							jugadorRegistros.revisarEquipo(); //limpiecito quedo
+							break;
+						case 2:
+							
+							break;
+						case 3:
+							
+							break;
+						case 4:
+							
+							break;
+						case 5:
+		
+							break;
+						case 6:
+							
+							break;
+						case 7:
+							
+							break;
+						case 8:
+							aux2 = false;
+							break;
+						default:
+							break;
+						}
+					} while (aux2);
+				}else {
+					System.out.println("No hay partida cargada.. Por favor crea nueva partida");
 					System.out.println(" ");
-					System.out.println("\n¿Qué deseas hacer?\n1) Revisar equipo\n2) Salir a capturar\n3) Acceso al pc (cambiar pokemon del equipo) \n4) Retar un Gimnasio  \n5) Desafio de alto mando \n6) Curar Pokemon \n7) Guardar \n8) Guardar y salir "); 
-					System.out.print("Ingrese Opcion: ");
-					int opcion2 = Integer.parseInt(entrada.nextLine()); 
-					switch (opcion2) {
-					case 1:
-						
-						break;
-					case 2:
-						
-						break;
-					case 3:
-						
-						break;
-					case 4:
-						
-						break;
-					case 5:
-	
-						break;
-					case 6:
-						
-						break;
-					case 7:
-						
-						break;
-					case 8:
-						aux2 = false;
-						break;
-					default:
-						break;
-					}
-				} while (aux2);
+				}
+				
 					
 					
 				break;
@@ -75,7 +82,7 @@ public class App {
 				System.out.print("Ingrese su apodo de jugador: ");
 				String apodo = entrada.nextLine();
 				// El mismo codigo exacto copiado y pegado de arriba, esto pudo ser llamar a un metodo sin mas...
-				
+				Jugador nuevoJugador = new Jugador(apodo,0); //al crear nuevoo jugador por defecto las medallas son 0??
 				boolean aux3 = true;
 				do {
 					System.out.println(" ");
@@ -84,7 +91,8 @@ public class App {
 					int opcion3 = Integer.parseInt(entrada.nextLine()); 
 					switch (opcion3) {
 					case 1:
-						
+						System.out.println(" ");
+						nuevoJugador.revisarEquipo(); //lo mismo pero otro jugador nomas
 						break;
 					case 2:
 						
@@ -123,11 +131,13 @@ public class App {
 		
 		
 	}
+	
 	public static Jugador leerRegistros() throws FileNotFoundException {
 		File f = new File("Registros.txt");
 		Scanner sc = new Scanner(f);
 		if (!sc.hasNextLine()) {
-			System.out.println("No hay ninguna partida guardada.");
+			System.out.println(" ");
+			System.out.println("Error al cargar partida..");
 			sc.close();
 			return null; 
 		}
@@ -135,18 +145,33 @@ public class App {
 		String linea = sc.nextLine();
 		String[] partes = linea.split(";");
 		String nombreJugador = partes[0];
-		int cantMedallas = Integer.parseInt(partes[1]);
+		
+		
+		int cantMedallas = 0; 
+		if (!partes[1].equalsIgnoreCase("none")) {
+			//  las medallas dependiendo de cómo lo guardan
+			try { cantMedallas = Integer.parseInt(partes[1]); 
+			}catch(Exception e) {
+				System.out.println("Error al cargar las medallas..");
+			}
+		}
+		Jugador jugadorRegistrado = new Jugador(nombreJugador,cantMedallas);
 		while(sc.hasNextLine()) {
 			linea = sc.nextLine();
 			partes = linea.split(";");
 			String nomPokemon = partes[0];
-			String estado = partes[1];
-			// Agregar estado a atrubutos de pokemon..
-			// falta guardar pokemon actualizado
-			// guardarPokemonJugador();
+			String estadoPokemon = partes[1];
 			
+			int idx = buscarPokemon(nomPokemon,pokedex);
+			if (idx != -1) {
+				Pokemon baseClon = pokedex.get(idx); //no podemos referenciar al pokemon de la pokedex sino afectaria a todos los pokemon que tengan el mismo nombre pero distinto dueño..
+				Pokemon pokemonClonado = new Pokemon(baseClon.getNombre(), baseClon.getHabitat(), baseClon.getPorcentajeAparicion(), baseClon.getVida(), baseClon.getAtaque(), baseClon.getDefensa(), baseClon.getAtaqueEspecial(), baseClon.getDefensaEspecial(), baseClon.getVelocidad(), baseClon.getTipo());
+				
+				pokemonClonado.setEstado(estadoPokemon);
+				jugadorRegistrado.agregarPokemon(pokemonClonado);
+			}	
 		}
-		return null;
+		return jugadorRegistrado;
 	}
 	public static void leerPokemones() {
 		//leemos e instanciamos los pokemon
