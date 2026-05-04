@@ -7,13 +7,15 @@ public class Entrenador {
 	private String nombre;
 	private ArrayList<Pokemon> equipo;
 	
+	
 	public Entrenador(String nombre) {
 		this.nombre = nombre;
 		this.equipo = new ArrayList<>();
+		
 	}
 	
 	public void agregarPokemon(Pokemon pokemon) {
-		this.equipo.add(pokemon);
+			this.equipo.add(pokemon);
 	}
 
 	public String getNombre() {
@@ -24,4 +26,9 @@ public class Entrenador {
 		return equipo;
 	}
 	
+	public void curarEquipo() {
+		for (int i = 0; i< equipo.size(); i++) {
+			equipo.get(i).setEstado(true);
+		}
+	}
 }

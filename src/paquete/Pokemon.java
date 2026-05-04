@@ -13,7 +13,7 @@ public class Pokemon {
 	private int defensaEspecial;
 	private int velocidad;
 	private String tipo;
-	private String estado = "Vivo"; //PUEDE SER UN BOOLEAN?
+	private boolean estaVivo = true; 
 	
 	
 	public Pokemon(String nombre, String habitat, double porcentajeAparicion, int vida, int ataque, int defensa,int ataqueEspecial, int defensaEspecial, int velocidad, String tipo) {
@@ -87,14 +87,15 @@ public class Pokemon {
 		return tipo;
 	}
 
-
-	public String getEstado() {
-		return estado;
+	
+	
+	public boolean getEstado() {
+		return estaVivo;
 	}
 
 
-	public void setEstado(String estado) {
-		this.estado = estado;
+	public void setEstado(boolean estado) {
+		this.estaVivo = estado;
 	}
 	
 	

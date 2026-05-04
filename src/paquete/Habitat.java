@@ -1,6 +1,7 @@
 package paquete;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Habitat {
 
@@ -19,5 +20,21 @@ public class Habitat {
 	public String getNombre() {
 		return nombre;
 	}
-	
+
+	public Pokemon explorar() {
+		Random aleatorio = new Random();
+		
+		double numero = aleatorio.nextDouble();
+		double suma = 0.0;
+		
+		for (int i = 0; i < pokemonSalvajes.size(); i++) {
+			suma += pokemonSalvajes.get(i).getPorcentajeAparicion();
+			if ( suma >= numero) {
+				return pokemonSalvajes.get(i);
+			}
+				
+		}
+		return null;
+		
+	}
 }
