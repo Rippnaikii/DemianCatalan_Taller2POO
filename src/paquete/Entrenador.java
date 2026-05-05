@@ -18,6 +18,11 @@ public class Entrenador {
 			this.equipo.add(pokemon);
 	}
 
+	@Override
+	public String toString() {
+		return  nombre ;
+	}
+
 	public String getNombre() {
 		return nombre;
 	}
