@@ -30,7 +30,7 @@ public class Habitat {
 		for (int i = 0; i < pokemonSalvajes.size(); i++) {
 			suma += pokemonSalvajes.get(i).getPorcentajeAparicion();
 			if ( suma >= numero) {
-				return pokemonSalvajes.get(i);
+				return pokemonSalvajes.get(i).clonarPokemon();  //mejoramos esto, para que no hagamos referencia a todos los pokemon llamados igual
 			}
 				
 		}

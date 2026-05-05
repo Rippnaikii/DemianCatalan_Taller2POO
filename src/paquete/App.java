@@ -36,7 +36,7 @@ public class App {
 			case 1: 
 				//Opcion continuar
 				Jugador jugadorRegistros = leerRegistros(); 
-				//menuJuego(entrada,jugadorRegistros);
+				
 				
 				if (!(jugadorRegistros == null)) {
 					System.out.println("\n\nBienvenido " + jugadorRegistros.getNombre());
@@ -99,7 +99,9 @@ public class App {
 				capturar(jugador, entrada);
 				break;
 			case 3: // entrar al PC
-				
+				jugador.revisarPc();
+				menuCambioPokemon(jugador,entrada);
+							
 				break;
 			case 4: // Gimnasio
 				
@@ -108,7 +110,7 @@ public class App {
 
 				break;
 			case 6: // curar pokemon
-				jugador.curarEquipo();
+				jugador.curarEquipo();//mejorar
 				break;
 			case 7: //guardar partida
 				guardarPartida(jugador);
@@ -125,6 +127,34 @@ public class App {
 			
 		
 		
+	}
+	public static void menuCambioPokemon(Jugador jugador,Scanner entrada) {
+		System.out.println("¿Qué deseas hacer?");
+		boolean continuar = true;
+		do {
+			System.out.println(" ");
+			System.out.println("1) Cambiar Pokémon. \n2) Salir.");
+			System.out.print("Ingrese Opcion: ");
+			
+			int actividad = Integer.parseInt(entrada.nextLine()); 
+			switch (actividad) {
+			case 1:
+				System.out.println(" ");
+				System.out.print("Ingrese el primer numero de la lista a intercambiar: ");
+				int indicePokemon1 = Integer.parseInt(entrada.nextLine()) - 1; //PARA QUE OCUPEMOS LOS INDICES COMO LO VEMOS EN LOS ARRAYS
+				System.out.print("Ingrese el segundo numero de la lista a intercambiar: ");
+				int indicePokemon2 = Integer.parseInt(entrada.nextLine()) - 1;
+				jugador.intercambiarPokemon(indicePokemon1,indicePokemon2);
+				break;
+			case 2: 
+				System.out.println("Has salido con exito..");
+				continuar = false;
+				break;
+			default:
+				System.out.println("Opcion no valida ");
+				break;
+			}
+		} while (continuar);
 	}
 	
 	public static void capturar(Jugador jugador, Scanner entrada) {
@@ -159,7 +189,7 @@ public class App {
 		
 		
 		//Buscamos e interactuamos con el pokemon
-		Pokemon pokemonSalvaje = Zona.explorar();
+		Pokemon pokemonSalvaje = Zona.explorar(); //MEJORADO
 		System.out.println("¡¡Un " + pokemonSalvaje.getNombre() + " salvaje ha aparecido!!"
 				+ "\n\n¿Qué deseas hacer?"
 				+ "\n\n1) Capturar"
@@ -172,7 +202,14 @@ public class App {
 			menuSalvaje = Integer.parseInt(entrada.nextLine());
 		switch (menuSalvaje) {
 		case 1:
-			jugador.agregarPokemon(pokemonSalvaje);
+			if (!jugador.tieneElPokemon(pokemonSalvaje)) {
+				jugador.agregarPokemon(pokemonSalvaje); //FALTA LOGICA DE SI YA TIENE EL POKEMON NO LO PUEDE CAPTURAR..LISTO
+				System.out.println(pokemonSalvaje.getNombre()+" capturado con exito!!");
+			}else {
+				System.out.println(" ");
+				System.out.println("Ya tienes un "+pokemonSalvaje.getNombre()+" en tu equipo o pc..");
+			}
+			
 			break;
 		case 2:
 			System.out.println("Has huido con éxito.\n");
@@ -190,14 +227,26 @@ public class App {
 		
 		escritor.write(jugador.getNombre() + ";" + jugador.getMedallas());
 		
-		ArrayList<Pokemon> equipo = jugador.getEquipo();
-		
+		ArrayList<Pokemon> equipo = jugador.getEquipo(); //FALTO GUARDAR LA LISTA PC...
+		ArrayList<Pokemon> pc = jugador.getPc(); //LISTO
 		if (equipo.size() > 0) {
 			for (int i = 0; i < equipo.size(); i++) {
 				escritor.newLine();
 				escritor.write(equipo.get(i).getNombre() + ";");
 				
 				if (equipo.get(i).getEstado() == true) {
+					escritor.write("Vivo");
+				} else {
+					escritor.write("Debilitado");
+				}
+			}
+		}
+		if (pc.size() > 0) {
+			for (int i = 0; i < pc.size(); i++) {
+				escritor.newLine();
+				escritor.write(pc.get(i).getNombre() + ";");
+				
+				if (pc.get(i).getEstado() == true) {
 					escritor.write("Vivo");
 				} else {
 					escritor.write("Debilitado");

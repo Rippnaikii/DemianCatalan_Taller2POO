@@ -32,6 +32,10 @@ public class Pokemon {
 	public int sumaStats() { //sumamos las estadisticas
 		return this.vida + this.ataque + this.defensa + this.ataqueEspecial + this.defensaEspecial + this.velocidad;
 	}
+	
+	public Pokemon clonarPokemon() { //para que no hagamos referencias a todos los pokemones llamados igual..
+		return new Pokemon(this.nombre, this.habitat, this.porcentajeAparicion, this.vida, this.ataque, this.defensa, this.ataqueEspecial, this.defensaEspecial, this.velocidad, this.tipo);
+	}
 
 	@Override
 	public String toString() {

@@ -1,2 +1,9 @@
-Queque;0
-Tentacruel;Vivo
+demian;0
+Tyranitar;Vivo
+Centiskorch;Vivo
+Golduck;Vivo
+Samurott;Vivo
+Psyduck;Vivo
+Whiscash;Vivo
+Magikarp;Vivo
+Arbok;Vivo
