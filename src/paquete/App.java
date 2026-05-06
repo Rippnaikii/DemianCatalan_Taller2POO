@@ -16,14 +16,14 @@ public class App {
 		leerHabitats();
 
 		leerPokedex();
-
+		
 		leerGimnasios();
-
-		System.out.println("Habitats cargados: " + habitats.size()); // solo para probar si printea bien...
+		/*System.out.println("Habitats cargados: " + habitats.size()); // solo para probar si printea bien...*/
 		Scanner entrada = new Scanner(System.in);
 
-		boolean aux = true;
+		boolean repetirMenu;
 		do {
+			repetirMenu = false;
 			System.out.println("1) Continuar. \n" + "2) Nueva Partida. \n" + "3) Salir. \n ");
 
 			System.out.print("Ingrese Opcion: ");
@@ -39,8 +39,8 @@ public class App {
 					System.out.println("\n\nBienvenido " + jugadorRegistros.getNombre());
 					jugar(jugadorRegistros, entrada);
 				} else {
-					System.out.println("No hay partida cargada.. Por favor crea nueva partida");
-					System.out.println(" ");
+					System.out.println("No hay partida cargada.. Por favor crea nueva partida\n");
+					repetirMenu = true;
 				}
 
 				break;
@@ -49,19 +49,18 @@ public class App {
 				System.out.print("Ingrese su apodo de jugador: ");
 				String apodo = entrada.nextLine();
 
-				Jugador nuevoJugador = new Jugador(apodo, 0);
+				Jugador nuevoJugador = new Jugador(apodo, "none");
 
 				jugar(nuevoJugador, entrada);
 
 				break;
 			case 3:
-				aux = false;
 				break;
 			default:
-				System.out.println("Opcion no valida...");
+				System.out.println("\nOpcion no valida...\n");
+				repetirMenu = true;
 			}
-		} while (aux);
-
+		} while (repetirMenu);
 		entrada.close();
 
 	}
@@ -73,13 +72,17 @@ public class App {
 		}
 	}
 	public static void jugar(Jugador jugador, Scanner entrada) {
-
+		
+		
 		boolean continuar = true;
 		do {
-			System.out.println(" ");
-			System.out.println("\n¿Qué deseas hacer?" + "\n1) Revisar equipo" + "\n2) Salir a capturar"
-					+ "\n3) Acceso al pc (cambiar pokemon del equipo) " + "\n4) Retar un Gimnasio  "
-					+ "\n5) Desafio de alto mando " + "\n6) Curar Pokemon " + "\n7) Guardar "
+			System.out.println("\n\n¿Qué deseas hacer?" 
+					+ "\n1) Revisar equipo" 
+					+ "\n2) Salir a capturar"
+					+ "\n3) Acceso al pc (cambiar pokemon del equipo) " 
+					+ "\n4) Retar un Gimnasio  "
+					+ "\n5) Desafio de alto mando " + "\n6) Curar Pokemon " 
+					+ "\n7) Guardar "
 					+ "\n8) Guardar y salir \n");
 
 			System.out.print("Ingrese Opcion: ");
@@ -116,6 +119,7 @@ public class App {
 				guardarPartida(jugador);
 				System.out.println();
 				continuar = false;
+				System.out.println("\n\n¡Nos vemos, " + jugador.getNombre() + "!.");
 				break;
 			default:
 				System.out.println("Opcion no valida..");
@@ -154,10 +158,10 @@ public class App {
 			case 1:
 				System.out.println(" ");
 				System.out.print("Ingrese el primer numero de la lista a intercambiar: ");
-				int indicePokemon1 = Integer.parseInt(entrada.nextLine()) - 1; // PARA QUE OCUPEMOS LOS INDICES COMO LO
+				int indicePokemon1 = leerOpcionSegura(entrada) - 1; // PARA QUE OCUPEMOS LOS INDICES COMO LO
 																				// VEMOS EN LOS ARRAYS
 				System.out.print("Ingrese el segundo numero de la lista a intercambiar: ");
-				int indicePokemon2 = Integer.parseInt(entrada.nextLine()) - 1;
+				int indicePokemon2 = leerOpcionSegura(entrada) - 1;
 				jugador.intercambiarPokemon(indicePokemon1, indicePokemon2);
 				break;
 			case 2:
@@ -183,9 +187,8 @@ public class App {
 			System.out.println(habitats.size() + 1 + ") Volver al menú");
 			System.out.print("\nIngrese zona: ");
 			indiceZona = leerOpcionSegura(entrada);
-			indiceZona += -1; // para manejarlo como se debe
-
-			// este control de errores se puede mejorar pero no quiero pensar cómo
+			indiceZona += -1; 
+			
 			if (indiceZona > habitats.size() || indiceZona < 0) {
 				indiceZona = habitats.size() + 10;
 			}
@@ -199,7 +202,7 @@ public class App {
 			Zona = habitats.get(indiceZona);
 		}
 
-		// Buscamos e interactuamos con el pokemon
+		
 		Pokemon pokemonSalvaje = Zona.explorar(); // MEJORADO
 		System.out.println("¡¡Un " + pokemonSalvaje.getNombre() + " salvaje ha aparecido!!" + "\n\n¿Qué deseas hacer?"
 				+ "\n\n1) Capturar" + "\n2) Huir");
@@ -266,7 +269,7 @@ public class App {
 
 			escritor.close();
 		} catch (Exception e) {
-			System.out.println("Hubo un error al cargar la partida.");
+			System.out.println("Hubo un error al guardar la partida.");
 		}
 	}
 
@@ -284,16 +287,11 @@ public class App {
 		String[] partes = linea.split(";");
 		String nombreJugador = partes[0];
 
-		int cantMedallas = 0;
+		String medallas = "none";
 		if (!partes[1].equalsIgnoreCase("none")) {
-			// las medallas dependiendo de cómo lo guardan
-			try {
-				cantMedallas = Integer.parseInt(partes[1]);
-			} catch (Exception e) {
-				System.out.println("Error al cargar las medallas..");
-			}
+			medallas = partes[1];
 		}
-		Jugador jugadorRegistrado = new Jugador(nombreJugador, cantMedallas);
+		Jugador jugadorRegistrado = new Jugador(nombreJugador, medallas);
 		while (sc.hasNextLine()) {
 			linea = sc.nextLine();
 			partes = linea.split(";");
@@ -362,7 +360,7 @@ public class App {
 		} catch (FileNotFoundException e) {
 			System.out.println("No se encontraron los datos de la Pokédex");
 		}
-		System.out.println("se introdujeron: " + pokedex.size() + " pokémon en la pokédex.");
+		//System.out.println("se introdujeron: " + pokedex.size() + " pokémon en la pokédex.");
 
 	}
 

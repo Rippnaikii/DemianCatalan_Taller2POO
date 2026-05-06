@@ -1,9 +1,2 @@
-demian;0
-Tyranitar;Vivo
+juanin;none
 Centiskorch;Vivo
-Golduck;Vivo
-Samurott;Vivo
-Psyduck;Vivo
-Whiscash;Vivo
-Magikarp;Vivo
-Arbok;Vivo

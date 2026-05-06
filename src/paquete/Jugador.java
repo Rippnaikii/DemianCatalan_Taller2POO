@@ -4,15 +4,17 @@ import java.util.ArrayList;
 
 public class Jugador extends Entrenador {
 	
-	private int medallas;
+	private ArrayList<String> medallas = new ArrayList<>();
 	private ArrayList<Pokemon> pc;
 	
 
-	public Jugador(String nombre, int medallas) {
+	public Jugador(String nombre, String medallas) {
 		super(nombre);
-		this.medallas = medallas;
 		this.pc = new ArrayList<>();
 		
+		for (String medalla : medallas.split("/")) {
+			this.medallas.add(medalla);
+		}
 	}
 	
 	public void intercambiarPokemon(int idx1,int idx2) {
@@ -106,22 +108,34 @@ public class Jugador extends Entrenador {
 	public void agregarPokemon(Pokemon pokemon) {
 		ArrayList<Pokemon> equipo = this.getEquipo();
 		if (equipo.size() < 6) {
-			super.agregarPokemon(pokemon);;
+			super.agregarPokemon(pokemon);
 		} else {
 			pc.add(pokemon);
 		}
 	}
 
-	public int getMedallas() {
-		return medallas;
+	public boolean tieneMedalla(String lider) {
+		for (int i = 0; i < medallas.size(); i++) {
+			if (medallas.get(i).equals(lider)) {
+				return true;
+			}
+		}
+		return false;
 	}
-
-
-	public void setMedallas(int medallas) {
-		this.medallas = medallas;
+	public void agregarMedalla(String nombreLider) {
+		medallas.add(nombreLider);
 	}
-
-
+	public String getMedallas() {
+		
+		String medallasString= "";
+		for (int i = 0; i < medallas.size(); i++) {
+			medallasString += medallas.get(i);
+			if (i != medallas.size() -1) {
+				medallasString += "/";
+			}
+		}
+		return medallasString;
+	}
 	public ArrayList<Pokemon> getPc() {
 		return pc;
 	}

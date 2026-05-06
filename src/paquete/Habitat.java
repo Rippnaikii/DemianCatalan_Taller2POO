@@ -34,7 +34,7 @@ public class Habitat {
 			}
 				
 		}
-		return null;
+		return pokemonSalvajes.get(pokemonSalvajes.size() - 1).clonarPokemon();
 		
 	}
 }

@@ -11,6 +11,7 @@ public class Gimnasio {
 		this.lider = lider;
 		this.estado = estado;
 		this.derrotado = false;
+		
 	}
 
 	public int getNumGym() {
