@@ -36,4 +36,24 @@ public class Entrenador {
 			equipo.get(i).setEstado(true);
 		}
 	}
+	
+	public boolean verificarDerrota() {
+		for (int i = 0; i < equipo.size(); i++) {
+			if (equipo.get(i).getEstado() == true) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public Pokemon sacarPokemon() {
+		for (int i = 0; i < equipo.size(); i++) {
+			if (equipo.get(i).getEstado() == true) {
+				System.out.println("\n¡" + this.getNombre() + " saca a " + equipo.get(i).getNombre() + "!\n");
+				return equipo.get(i);
+			}
+		}
+		return null;
+	}
+	
 }

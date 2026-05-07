@@ -3,14 +3,18 @@ package paquete;
 public class Gimnasio {
 	private int numGym;
 	private Entrenador lider;
-	private String estado;
+	//private String estado;
 	private boolean derrotado;
 	
 	public Gimnasio(int numGym, Entrenador lider, String estado) {
 		this.numGym = numGym;
 		this.lider = lider;
-		this.estado = estado;
-		this.derrotado = false;
+		if (estado.equalsIgnoreCase("Sin derrotar")) {
+			this.derrotado = false;
+		} else { 
+			this.derrotado = true;
+		}
+		
 		
 	}
 
@@ -19,6 +23,9 @@ public class Gimnasio {
 	}
 	public Entrenador getLider() {
 		return lider;
+	}
+	public String getMedalla() {
+		return lider.getNombre();
 	}
 
 	public boolean isDerrotado() {
@@ -31,6 +38,12 @@ public class Gimnasio {
 
 	@Override
 	public String toString() {
+		String estado;
+		if (derrotado == true) {
+			estado = "Derrotado";
+		} else { 
+			estado = "Sin derrotar";
+			}
 		return  numGym + ") " + lider + " " + estado  ;
 	}
 

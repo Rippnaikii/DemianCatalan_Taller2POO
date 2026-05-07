@@ -53,7 +53,6 @@ public class Jugador extends Entrenador {
 		}
 		
 	}
-	
 	public void revisarEquipo() {
 		System.out.println("Equipo Actual: ");
 		if(super.getEquipo().isEmpty()) {
@@ -63,6 +62,17 @@ public class Jugador extends Entrenador {
 			for (int i = 0; i < super.getEquipo().size(); i++) {
 				System.out.println((i+1)+") "+ super.getEquipo().get(i).toString());
 			}
+		}
+	}
+	public void mostrarEquipo() {
+		Pokemon pokemon;
+		String estado;
+		for (int i = 0; i < super.getEquipo().size(); i++) {
+			pokemon = super.getEquipo().get(i);
+			if (pokemon.getEstado()) {
+				estado = "Vivo";
+			} else { estado = "Debilitado";}
+			System.out.println((i+1)+") "+ pokemon.getNombre() + " | " + estado);
 		}
 	}
 	public void revisarPc() {
@@ -140,7 +150,16 @@ public class Jugador extends Entrenador {
 		return pc;
 	}
 
-
+	
+	public Pokemon elegirPokemon(int indice) {
+		Pokemon pokemon = super.getEquipo().get(indice); 
+		if (pokemon.getEstado() == true) {
+			System.out.println("\n¡" + this.getNombre() + " saca a " + pokemon.getNombre() + "!\n");
+			return pokemon;
+		}
+		
+		return null;
+	}
 	
 	
 	

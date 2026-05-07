@@ -11,6 +11,7 @@ public class App {
 	public static ArrayList<Pokemon> pokedex = new ArrayList<>();
 	public static ArrayList<Habitat> habitats = new ArrayList<>();
 	public static ArrayList<Gimnasio> gimnasios = new ArrayList<>();
+	//public static TablaTipos tabla = new TablaTipos();
 
 	public static void main(String[] args) throws FileNotFoundException {
 		leerHabitats();
@@ -111,6 +112,7 @@ public class App {
 				break;
 			case 6: // curar pokemon
 				jugador.curarEquipo();// mejorar
+				System.out.println("\n¡La salud de tu equipo ha sido restaurada!\n");
 				break;
 			case 7: // guardar partida
 				guardarPartida(jugador);
@@ -128,23 +130,147 @@ public class App {
 		} while (continuar);
 
 	}
-
+	public static int menuCombate(Scanner entrada) {
+		System.out.println("Que deseas hacer?\n"
+				+ "1) Atacar\n"
+				+ "2) Cambiar de pokemon\n"
+				+ "3) Rendirse\n"
+				+ "Ingrese Opcion:");
+		int opcion = leerOpcionSegura(entrada);
+		return opcion;
+	}
+	public static Pokemon cambiarPokemon(Jugador jugador, Scanner entrada) {
+		while (true) {
+			System.out.println("A cuál pokemon deseas cambiar?\n");
+			jugador.mostrarEquipo();
+			System.out.print("\nseleccione un pokemon: ");
+			int indiceCambio = leerOpcionSegura(entrada) - 1;
+			
+			Pokemon cambio = jugador.elegirPokemon(indiceCambio);
+			if (cambio != null) {
+				return cambio;
+			} else {System.out.println("El pokemon que desea sacar está debilitado.\n");}
+		}
+	}
+	public static boolean combate(Jugador jugador, Entrenador rival, Scanner entrada) {
+		boolean jugadorGana = false;
+		boolean finCombate = false;
+		
+		Pokemon pokemonRival = rival.sacarPokemon();
+		Pokemon pokemonActual = jugador.sacarPokemon(); 
+		
+		
+		do {
+			//int combate = menuCombate(entrada);
+			int combate = menuCombate(entrada); 
+			
+			switch(combate) {
+			
+			case 1://atacar
+				double puntos = pokemonActual.sumaStats();
+				double puntosRival = pokemonRival.sumaStats();
+				
+				System.out.println("\n"+ pokemonActual.getNombre() + " --> " + puntos
+						+ "\n" + pokemonRival.getNombre() + " --> " + puntosRival);
+				
+				double efectividad = TablaTipos.efectividad(pokemonActual.getTipo(), pokemonRival.getTipo());
+				puntos = puntos * efectividad;
+				
+				if (efectividad > 1.0 ) {
+					System.out.println("\n¡" + pokemonActual.getNombre() + " es efectivo contra " + pokemonRival.getNombre() + "!");
+				} else if(efectividad < 1.0) {
+					System.out.println("\n" + pokemonActual.getNombre() + " no es efectivo contra " + pokemonRival.getNombre() + "...");
+				}
+				
+				//esto se repite, no lo puse como metodo porque habría que entregarle los puntajes igual:
+				System.out.println("\n"+ pokemonActual.getNombre() + " --> " + puntos
+						+ "\n" + pokemonRival.getNombre() + " --> " + puntosRival);
+				
+				if (puntos > puntosRival) {
+					pokemonRival.setEstado(false);
+					pokemonRival = rival.sacarPokemon();
+				} else if(puntos < puntosRival) {
+					pokemonActual.setEstado(false);
+					if (jugador.verificarDerrota() != false) {
+						pokemonActual = cambiarPokemon(jugador, entrada);
+					} 
+				}
+				
+				break;
+				
+				
+			case 2://cambiar pokemon
+				pokemonActual = cambiarPokemon(jugador, entrada);
+				break;
+				
+				
+			case 3: //rendirse
+				finCombate = true;
+				System.out.println("\nTe has rendido...\n");
+				break;
+			}
+			
+			
+			if (rival.verificarDerrota() == true) {
+				System.out.println("¡Has derrotado a " + rival.getNombre() + "!");
+				jugadorGana = true;
+				finCombate = true;
+			} else if (jugador.verificarDerrota() == true) {
+				System.out.println("Te has quedado sin pokemon en tu equipo...");
+				finCombate = true;
+			}
+		}while (finCombate == false);
+		
+		return jugadorGana;
+	}
+	
 	private static void retarALider(Jugador jugador, Scanner entrada) {
-		System.out.println("A cual lider deseas retar?? ");
-		System.out.println(" ");
-		mostrarLideres();
-		//SEGUIR CON LA LOGICA (NO SE PUEDE HACER SWITCH CASE ACA)
+		System.out.println("A cual lider deseas retar?? \n");
+		
+		int indiceGym = -1;
+		
+		// conseguimos el gimnasio a retar
+		
+		do {
+			for (int i = 0; i < gimnasios.size(); i++) {
+				System.out.println(gimnasios.get(i).toString());
+			}
+			System.out.print(gimnasios.size() + 1 + ") Volver al menú"
+					+ "\n\nIngrese gimnasio: ");
+			
+			indiceGym = leerOpcionSegura(entrada) - 1;
+		} while (indiceGym > gimnasios.size() || indiceGym < 0);
+		
+		if (indiceGym == gimnasios.size()) { //verificamos si quiere volver
+			System.out.println("\nVolviendo...");
+			return;
+		} 
+		Gimnasio gym;
+		gym = gimnasios.get(indiceGym);
+		
+		if (indiceGym > 0 && gimnasios.get(indiceGym-1).isDerrotado() == false) {
+			System.out.println("Calmado Entrenador!!! No puedes retar a " + gym.getMedalla() + " sin haber derrotado a los lideres anteriores!!");
+			return;
+		}
 		
 		
+		
+		//tenemos el gymnasio y empezamos el combate
+		boolean jugadorGana = combate(jugador, gym.getLider(), entrada);
+		String estaMedalla = gym.getMedalla();
+		
+		
+		//le damos la medalla si gano y no la tiene
+		if (jugadorGana == true && jugador.tieneMedalla(estaMedalla) == false) {
+			jugador.agregarMedalla(estaMedalla);
+			gym.setDerrotado(true);
+			System.out.println("¡Has derrotado a Líder de gimnasio " + estaMedalla + "!");
+		}
+		
+		System.out.println("Volviendo al menú principal...\n");
 		
 	}
 	
-	private static void mostrarLideres() {
-		for (int i = 0; i < gimnasios.size(); i++) {
-			System.out.println(gimnasios.get(i).toString());
-		}
-		
-	}
 	public static void menuCambioPokemon(Jugador jugador, Scanner entrada) {
 		System.out.println("¿Qué deseas hacer?");
 		boolean continuar = true;
@@ -189,10 +315,10 @@ public class App {
 			indiceZona = leerOpcionSegura(entrada);
 			indiceZona += -1; 
 			
-			if (indiceZona > habitats.size() || indiceZona < 0) {
+			/*if (indiceZona > habitats.size() || indiceZona < 0) {
 				indiceZona = habitats.size() + 10;
-			}
-		} while (indiceZona > habitats.size());
+			}*/
+		} while (indiceZona > habitats.size() || indiceZona < 0) ;
 
 		Habitat Zona;
 		if (indiceZona == habitats.size()) {
@@ -409,7 +535,7 @@ public class App {
 				Gimnasio newGym = new Gimnasio(numGym, lider,estadoLider);
 				if (estadoLider.equalsIgnoreCase("Derrotado")) { // en caso de que ya este derrotado..
 					newGym.setDerrotado(true);
-				}
+				} else {lider.curarEquipo();}
 				gimnasios.add(newGym);
 
 			}
