@@ -41,7 +41,7 @@ public class App {
 					sincronizarGimnasios(jugadorRegistros.getMedallas());
 					jugar(jugadorRegistros, entrada);
 				} else {
-					System.out.println("No hay partida cargada.. Por favor crea nueva partida\n");
+					System.out.println("No hay partida cargada... Por favor crea nueva partida\n");
 					repetirMenu = true;
 				}
 
@@ -109,7 +109,7 @@ public class App {
 				retarALider(jugador,entrada); //NECESITA MEJORA, ESTA INCOMPLETO.. ME DIO FLOJERA SEGUIR..
 				break;
 			case 5: // alto mando
-
+				retarAltosMandos(jugador, entrada);
 				break;
 			case 6: // curar pokemon
 				jugador.curarEquipo();// mejorar
@@ -144,8 +144,11 @@ public class App {
 		while (true) {
 			System.out.println("A cuál pokemon deseas cambiar?\n");
 			jugador.mostrarEquipo();
-			System.out.print("\nseleccione un pokemon: ");
-			int indiceCambio = leerOpcionSegura(entrada) - 1;
+			int indiceCambio;
+			do {
+				System.out.print("\nseleccione un pokemon: ");
+				indiceCambio = leerOpcionSegura(entrada) - 1;
+			} while(indiceCambio < 0 || indiceCambio >= jugador.getEquipo().size());
 			
 			Pokemon cambio = jugador.elegirPokemon(indiceCambio);
 			if (cambio != null) {
@@ -192,7 +195,7 @@ public class App {
 					pokemonRival = rival.sacarPokemon();
 				} else if(puntos < puntosRival) {
 					pokemonActual.setEstado(false);
-					if (jugador.verificarDerrota() != false) {
+					if (jugador.haPerdido() != true) {
 						pokemonActual = cambiarPokemon(jugador, entrada);
 					} 
 				}
@@ -212,11 +215,11 @@ public class App {
 			}
 			
 			
-			if (rival.verificarDerrota() == true) {
+			if (rival.haPerdido() == true) {
 				System.out.println("¡Has derrotado a " + rival.getNombre() + "!");
 				jugadorGana = true;
 				finCombate = true;
-			} else if (jugador.verificarDerrota() == true) {
+			} else if (jugador.haPerdido() == true) {
 				System.out.println("Te has quedado sin pokemon en tu equipo...");
 				finCombate = true;
 			}
@@ -266,9 +269,29 @@ public class App {
 			jugador.agregarMedalla(estaMedalla); // Actualiza su medallaMaxima
 			gym.setDerrotado(true); 
 			System.out.println("¡Has derrotado al Líder de gimnasio " + estaMedalla + "!");
+		} else if (jugadorGana == false) {
+			gym.getLider().curarEquipo();
 		}
 		
 		System.out.println("Volviendo al menú principal...\n");
+		
+	}
+	
+	private static void retarAltosMandos(Jugador jugador, Scanner entrada) {
+		if (!jugador.getMedallas().equals(gimnasios.get(gimnasios.size()-1).getMedalla())) {
+			System.out.println("No puedes desafiar al Alto mando sin derrotar a" + gimnasios.get(gimnasios.size()-1).getMedalla());
+			return;
+		}
+		
+		
+		for (int i = 0; i < AltoMando.cantidadAltosMandos(); i++) {
+			boolean gana = combate(jugador, AltoMando.getAltoMando(i), entrada);
+			
+			if (gana == false) {
+				AltoMando.reiniciarAltoMando();
+				break;
+			}
+		}
 		
 	}
 	
@@ -404,8 +427,7 @@ public class App {
 		File f = new File("Registros.txt");
 		Scanner sc = new Scanner(f);
 		if (!sc.hasNextLine()) {
-			System.out.println(" ");
-			System.out.println("Error al cargar partida..");
+			System.out.println("\nError al cargar partida..");
 			sc.close();
 			return null;
 		}
@@ -430,15 +452,10 @@ public class App {
 				estadoPokemon = false;
 			}
 
-			int idx = buscarPokemon(nomPokemon, pokedex);
+			int idx = buscarPokemon(nomPokemon);
 			if (idx != -1) {
-				Pokemon baseClon = pokedex.get(idx); // no podemos referenciar al pokemon de la pokedex sino afectaria a
-														// todos los pokemon que tengan el mismo nombre pero distinto
-														// dueño..
-				Pokemon pokemonClonado = new Pokemon(baseClon.getNombre(), baseClon.getHabitat(),
-						baseClon.getPorcentajeAparicion(), baseClon.getVida(), baseClon.getAtaque(),
-						baseClon.getDefensa(), baseClon.getAtaqueEspecial(), baseClon.getDefensaEspecial(),
-						baseClon.getVelocidad(), baseClon.getTipo());
+				Pokemon baseClon = pokedex.get(idx); 
+				Pokemon pokemonClonado = baseClon.clonarPokemon();
 
 				pokemonClonado.setEstado(estadoPokemon);
 				jugadorRegistrado.agregarPokemon(pokemonClonado);
@@ -542,7 +559,7 @@ public class App {
 
 				for (int i = 0; i < cantPokemons; i++) {
 					String nomPokemon = partes[i + 4];
-					int idx = buscarPokemon(nomPokemon, pokedex);
+					int idx = buscarPokemon(nomPokemon);
 					if (idx != -1) {
 						Pokemon pokemonLider = pokedex.get(idx).clonarPokemon();
 						// añadimos el clon a el array del lider
@@ -564,13 +581,14 @@ public class App {
 			System.out.println("No se encontraron los datos de los Gimnasios..");
 		}
 	}
-
-	public static int buscarPokemon(String nombre, ArrayList<Pokemon> lista) {
-		for (int i = 0; i < lista.size(); i++) {
-			if (nombre.equals(lista.get(i).getNombre())) {
+	
+	public static int buscarPokemon(String nombre) {
+		for (int i = 0; i < pokedex.size(); i++) {
+			if (nombre.equals(pokedex.get(i).getNombre())) {
 				return i;
 			}
 		}
 		return -1;
 	}
+	
 }

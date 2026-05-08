@@ -130,8 +130,6 @@ public class Jugador extends Entrenador {
 	public ArrayList<Pokemon> getPc() {
 		return pc;
 	}
-
-	
 	public Pokemon elegirPokemon(int indice) {
 		Pokemon pokemon = super.getEquipo().get(indice); 
 		if (pokemon.getEstado() == true) {
@@ -141,7 +139,4 @@ public class Jugador extends Entrenador {
 		
 		return null;
 	}
-	
-	
-	
 }

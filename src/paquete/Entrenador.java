@@ -37,7 +37,7 @@ public class Entrenador {
 		}
 	}
 	
-	public boolean verificarDerrota() {
+	public boolean haPerdido() {
 		for (int i = 0; i < equipo.size(); i++) {
 			if (equipo.get(i).getEstado() == true) {
 				return false;
