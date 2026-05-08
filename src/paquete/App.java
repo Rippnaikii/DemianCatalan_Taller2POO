@@ -38,6 +38,7 @@ public class App {
 
 				if (!(jugadorRegistros == null)) {
 					System.out.println("\n\nBienvenido " + jugadorRegistros.getNombre());
+					sincronizarGimnasios(jugadorRegistros.getMedallas());
 					jugar(jugadorRegistros, entrada);
 				} else {
 					System.out.println("No hay partida cargada.. Por favor crea nueva partida\n");
@@ -51,7 +52,7 @@ public class App {
 				String apodo = entrada.nextLine();
 
 				Jugador nuevoJugador = new Jugador(apodo, "none");
-
+				sincronizarGimnasios("none");
 				jugar(nuevoJugador, entrada);
 
 				break;
@@ -261,10 +262,10 @@ public class App {
 		
 		
 		//le damos la medalla si gano y no la tiene
-		if (jugadorGana == true && jugador.tieneMedalla(estaMedalla) == false) {
-			jugador.agregarMedalla(estaMedalla);
-			gym.setDerrotado(true);
-			System.out.println("¡Has derrotado a Líder de gimnasio " + estaMedalla + "!");
+		if (jugadorGana == true && gym.isDerrotado() == false) {
+			jugador.agregarMedalla(estaMedalla); // Actualiza su medallaMaxima
+			gym.setDerrotado(true); 
+			System.out.println("¡Has derrotado al Líder de gimnasio " + estaMedalla + "!");
 		}
 		
 		System.out.println("Volviendo al menú principal...\n");
@@ -447,7 +448,25 @@ public class App {
 		sc.close();
 		return jugadorRegistrado;
 	}
+	public static void sincronizarGimnasios(String ultimaMedalla) {
+		for (int i = 0; i < gimnasios.size(); i++) {
+			gimnasios.get(i).setDerrotado(false);
+		}
+		
+		if (ultimaMedalla.equalsIgnoreCase("none")) {
+			return; // Si no tiene medallas se quedan todos en false....
+		}
+		
 
+		for (int i = 0; i < gimnasios.size(); i++) {
+			// Vamos marcando true hasta que encontramos al lider..
+			gimnasios.get(i).setDerrotado(true);
+
+			if (gimnasios.get(i).getLider().getNombre().equalsIgnoreCase(ultimaMedalla)) {
+				break; 
+			}
+		}
+	}
 	public static void leerPokedex() {
 		// leemos e instanciamos los pokemon
 		try {

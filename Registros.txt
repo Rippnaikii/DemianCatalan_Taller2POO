@@ -1,2 +1,11 @@
 juanin;none/EmmaLaArdillaRabiosa
+Groudon;Vivo
+Sableye;Vivo
+Dracovish;Vivo
+Quagsire;Vivo
+Snorlax;Vivo
+Mamoswine;Vivo
+Kingler;Vivo
+Charizard;Vivo
+Spiritomb;Vivo
 Arbok;Vivo

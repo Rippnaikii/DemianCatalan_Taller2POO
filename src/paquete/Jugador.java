@@ -4,17 +4,14 @@ import java.util.ArrayList;
 
 public class Jugador extends Entrenador {
 	
-	private ArrayList<String> medallas = new ArrayList<>();
+	private String medallaMaxima;
 	private ArrayList<Pokemon> pc;
 	
 
-	public Jugador(String nombre, String medallas) {
+	public Jugador(String nombre, String medallaMaxima) {
 		super(nombre);
 		this.pc = new ArrayList<>();
-		
-		for (String medalla : medallas.split("/")) {
-			this.medallas.add(medalla);
-		}
+		this.medallaMaxima = medallaMaxima;
 	}
 	
 	public void intercambiarPokemon(int idx1,int idx2) {
@@ -124,27 +121,11 @@ public class Jugador extends Entrenador {
 		}
 	}
 
-	public boolean tieneMedalla(String lider) {
-		for (int i = 0; i < medallas.size(); i++) {
-			if (medallas.get(i).equals(lider)) {
-				return true;
-			}
-		}
-		return false;
-	}
 	public void agregarMedalla(String nombreLider) {
-		medallas.add(nombreLider);
+		this.medallaMaxima = nombreLider;
 	}
 	public String getMedallas() {
-		
-		String medallasString= "";
-		for (int i = 0; i < medallas.size(); i++) {
-			medallasString += medallas.get(i);
-			if (i != medallas.size() -1) {
-				medallasString += "/";
-			}
-		}
-		return medallasString;
+		return medallaMaxima;
 	}
 	public ArrayList<Pokemon> getPc() {
 		return pc;
