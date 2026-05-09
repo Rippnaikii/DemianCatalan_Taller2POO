@@ -19,6 +19,8 @@ public class App {
 		leerPokedex();
 		
 		leerGimnasios();
+		
+		leerAltoMando();
 		/*System.out.println("Habitats cargados: " + habitats.size()); // solo para probar si printea bien...*/
 		Scanner entrada = new Scanner(System.in);
 
@@ -132,11 +134,11 @@ public class App {
 
 	}
 	public static int menuCombate(Scanner entrada) {
-		System.out.println("Que deseas hacer?\n"
+		System.out.print("\nQue deseas hacer?\n"
 				+ "1) Atacar\n"
 				+ "2) Cambiar de pokemon\n"
 				+ "3) Rendirse\n"
-				+ "Ingrese Opcion:");
+				+ "Ingrese Opcion: ");
 		int opcion = leerOpcionSegura(entrada);
 		return opcion;
 	}
@@ -257,7 +259,7 @@ public class App {
 			return;
 		}
 		
-		
+		System.out.println("\nDesafiando a " + gym.getLider().getNombre() + "!");
 		
 		//tenemos el gymnasio y empezamos el combate
 		boolean jugadorGana = combate(jugador, gym.getLider(), entrada);
@@ -279,12 +281,14 @@ public class App {
 	
 	private static void retarAltosMandos(Jugador jugador, Scanner entrada) {
 		if (!jugador.getMedallas().equals(gimnasios.get(gimnasios.size()-1).getMedalla())) {
-			System.out.println("No puedes desafiar al Alto mando sin derrotar a" + gimnasios.get(gimnasios.size()-1).getMedalla());
+			System.out.println("No puedes desafiar al Alto mando sin derrotar a " + gimnasios.get(gimnasios.size()-1).getMedalla());
 			return;
 		}
 		
 		
 		for (int i = 0; i < AltoMando.cantidadAltosMandos(); i++) {
+			System.out.println("\nEstas desafiando a " + AltoMando.getAltoMando(i).getNombre() 
+					+ "\nTe quedan " + (AltoMando.cantidadAltosMandos()-(i+1)));
 			boolean gana = combate(jugador, AltoMando.getAltoMando(i), entrada);
 			
 			if (gana == false) {
@@ -543,7 +547,37 @@ public class App {
 			System.out.println("No se encontraron los datos de los Hábitats");
 		}
 	}
+	
+	public static void leerAltoMando() {
+		try {
+			File f = new File("Alto Mando.txt");
+			Scanner sc = new Scanner(f);
+			while (sc.hasNextLine()) {
+				String[] partes = sc.nextLine().split(";");
+				
+				//partes 0 lo ignoramos..
+				String nombreElite = partes[1];
+				Entrenador elite = new Entrenador(nombreElite);
 
+				// ocupamos el tamaño de partes partiendo desde el 2
+				for (int i = 2; i < partes.length; i++) {
+					String nomPokemon = partes[i]; 
+					int idx = buscarPokemon(nomPokemon);
+					
+					if (idx != -1) {
+						Pokemon pokemonElite = pokedex.get(idx).clonarPokemon();
+						elite.agregarPokemon(pokemonElite);
+					} else {
+						System.out.println("El pokemon " + nomPokemon + " no está en la Pokedex..");
+					}
+				}
+				AltoMando.agregarAltoMando(elite);
+			}
+			sc.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("No se encontraron los datos de AltoMando.txt");
+		}
+	}
 	public static void leerGimnasios() {
 
 		try {
