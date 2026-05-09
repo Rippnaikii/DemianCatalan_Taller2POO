@@ -159,6 +159,10 @@ public class App {
 		}
 	}
 	public static boolean combate(Jugador jugador, Entrenador rival, Scanner entrada) {
+		if (jugador.haPerdido() == true) {
+			System.out.println("\n\nNo puedes desafiar a otro entrenador con tu equipo debilitado...");
+			return false;
+		}
 		boolean jugadorGana = false;
 		boolean finCombate = false;
 		
@@ -287,16 +291,23 @@ public class App {
 		
 		
 		for (int i = 0; i < AltoMando.cantidadAltosMandos(); i++) {
-			System.out.println("\nEstas desafiando a " + AltoMando.getAltoMando(i).getNombre() 
-					+ "\nTe quedan " + (AltoMando.cantidadAltosMandos()-(i+1)));
+			System.out.println("\nEstas desafiando a " + AltoMando.getAltoMando(i).getNombre());
 			boolean gana = combate(jugador, AltoMando.getAltoMando(i), entrada);
 			
 			if (gana == false) {
 				AltoMando.reiniciarAltoMando();
-				break;
+				System.out.println("\n\n\nHas fallado tu desafío al alto mando..."
+						+ "\nVolviendo al menú principal...\n");
+				return;
 			}
+			
+			System.out.println("\nTe quedan " + (AltoMando.cantidadAltosMandos()-(i+1)) + " altos mandos por derrotar");
 		}
 		
+		System.out.println("===================================="
+				+ "\n\n¡¡¡¡Felicidades!!!!"
+				+ "\n\nHas derrotado al alto mando y te has coronado como el mejor entrenador de la region."
+				+ "\n\nGracias por jugar. Ahora volverás al menú principal.");
 	}
 	
 	public static void menuCambioPokemon(Jugador jugador, Scanner entrada) {
